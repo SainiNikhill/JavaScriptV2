@@ -167,5 +167,3 @@ user instanceof Object; // true
 
 ---
 
-If you want, we can now create a file for Expressions, Control Flow, Loops, or Functions.
-
