@@ -164,17 +164,39 @@ Object.entries(user); // [["name", "Amit"], ["age", 22]]
 # 11. Copying Objects
 Objects are copied by **reference**, not value.
 
-## Example (reference copy)
+### `why do we need copying`?
+In JavaScript, objects are stored by reference 
+
 ```js
-let obj1 = { a: 1 };
-let obj2 = obj1;
-obj2.a = 5;
-console.log(obj1.a); // 5
+const obj1 = { a: 10 };
+const obj2 = obj1;
+
+obj2.a = 20;
+console.log(obj1.a); // 20 (same object)
 ```
+means if you modify object 2 it will affect object 1 also, because no new object is created ,they both points to same memory location;
+So to avoid affecting the original object, we copy it and there are two types of copying
+
+- Shallow Copy
+- Deep Copy
+
 
 ---
 
 # 12. Shallow Copy
+
+A shallow copy copies only the first level of the object.
+If the object contains nested objects, they are still shared (same reference).
+
+Methods that create Shallow Copy
+
+- { ...obj } (spread operator)
+
+- Object.assign({}, obj)
+
+- Array.slice() (for arrays)
+
+- Array.concat() (for arrays)
 ## Using spread operator
 ```js
 let obj2 = { ...obj1 };
@@ -185,21 +207,79 @@ let obj2 = { ...obj1 };
 let obj2 = Object.assign({}, obj1);
 ```
 
+```js
+const user = {
+  name: "Nikhil",
+  address: { city: "Delhi" }
+};
+
+const copyUser = { ...user }; // shallow copy
+
+copyUser.address.city = "Mumbai";
+
+console.log(user.address.city); // Mumbai ❗ 
+
+// here only first level copy but the nested object still share the same reference as original so if you modify them they will definately affect the original object - to avoid this we use DEEP COPY
+```
+
 ---
 
 # 13. Deep Copy
 To copy nested objects completely:
+A deep copy creates a full independent copy of the entire object, including nested objects.
 
+Changing the deep copy will NOT affect the original.
+
+
+
+
+## Using JSON.parse(JSON.stringify(obj));
 ```js
 let deepCopy = JSON.parse(JSON.stringify(obj1));
 ```
+## using structuredClone(obj)
+```js
+let deepCopy = structuredClone(obj1);
+```
 
-Or using custom functions/libraries.
+Methods for Deep Copy
+Method | 	Deep Copy? |	Notes
+---- | --------- | ----------- 
+JSON.parse(JSON.stringify(obj)) |	Yes	|Easy, but loses functions & undefined
+structuredClone(obj)|	Yes	|Best modern way
+Manual recursion|	Yes|	Works for everything
+Lodash _.cloneDeep()	|Yes|	Library method
+
 
 ---
 
 # 14. Optional Chaining (?.)
 Safely access nested properties.
+
+JavaScript throws an error if you access a property on undefined or null.
+```js
+const user = {};
+
+console.log(user.address.city);
+// ❌ TypeError: Cannot read properties of undefined
+```
+
+Optional chaining prevents this crash.
+
+Basic Syntax
+```js
+object?.property
+object?.[expression]
+object?.method()
+```
+If anything before ?. is null or undefined, JavaScript:
+
+- stops
+
+- returns undefined
+
+- does NOT throw an error
+
 ```js
 user.address?.city;
 ```
